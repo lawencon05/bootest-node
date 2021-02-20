@@ -20,25 +20,18 @@ async function postgreSQL() {
 
 async function mongoDb() {
     let mc = md.MongoClient;
-    var url = `mongodb://localhost:27017`;
+    var url = `mongodb://${process.env.HOSTMONGO}:${process.env.PORTMONGO}`;
     let d = await mc.connect(url);
 
-    let db = d.db(dbName);
-
-    // create collections or comment it when you already add manually
-    // await db.createCollection("users");
-    // another collection here
-
-    return db;
+    return d.db(dbName);
 }
 
 function redisDb() {
-    const rp = 6379;
-    const rc = redis.createClient(rp);
-  
-    rc.on('ready', () => {
-        console.log(`connected to redis with port ${rp}`);
+    const rc = redis.createClient({
+        host : process.env.HOSTREDIS,
+        port : process.env.PORTREDIS
     });
+
     rc.on("error", (err) => {
         console.log('error redis =>', err);
     });

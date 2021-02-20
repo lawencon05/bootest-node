@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  api:
+    container_name: node1
+    build: .
+    command: npm start
+    ports:
+      - "3000:3000"
+    environment:
+      HOSTMONGO: mongo1
+      PORTMONGO: 27017
+      HOSTREDIS: redis1
+      PORTREDIS: 6379
+    depends_on:
+      - mongo
+      - redis
+  mongo:
+    container_name: mongo1
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+  redis:
+    container_name: redis1
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+networks:
+  default:
+    name: "node-network"
