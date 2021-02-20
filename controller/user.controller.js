@@ -14,36 +14,30 @@ export class UserController extends BaseController {
     }
 
     createUser(req, res) {
-        try {
-            let user = req.body;
-            userService.createUser(user);
-            super.resSuccess(res, user);
-        } catch (error) {
-            super.resError(res, error);
-        }
+        let user = req.body;
+        userService.createUser(user)
+            .then(() => super.resSuccess(res, user))
+            .catch(error => super.resError(res, 500, error));
     }
 
-    async login(req, res) {
-        try {
-            let user = req.body;
-            let jwt = await userService.login(user.email, user.pwd);
-            if (jwt) {
-                super.resSuccess(res, { token: jwt });
-            } else {
-                super.resError(res, 401, "Username/password not match");
-            }
-        } catch (error) {
-            super.resError(res, error);
-        }
+    login(req, res) {
+        let user = req.body;
+        userService.login(user.email, user.pwd)
+            .then(
+                jwt => {
+                    if (jwt) {
+                        super.resSuccess(res, { token: jwt });
+                    } else {
+                        super.resError(res, 401, "Username/password not match")
+                    }
+                }
+            ).catch(error => super.resError(res, 500, error));
     }
 
-    async getUserById(req, res) {
-        try {
-            let user = await userService.getUserById(req.params.id);
-            super.resSuccess(res, user);
-        } catch (error) {
-            super.resError(res, error);
-        }
+    getUserById(req, res) {
+        userService.getUserById(req.params.id)
+            .then(user => super.resSuccess(res, user))
+            .catch(error => super.resError(res, 500, error));
     }
 
 }

@@ -9,5 +9,6 @@ export class IndexController {
         })
 
         new UserController(router);
+        //another controller here
     }
 }

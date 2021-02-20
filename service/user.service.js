@@ -1,14 +1,14 @@
-import { UserDao } from '../dao/user.dao.js';
+import { UserDao } from '../dao/user.dao.mongo.js';
 import { hashPwd, comparePwd } from '../config/encrypt.js';
 import { getJwt } from '../config/jwt.js';
 
-let userDao = new UserDao();
-
 export class UserService {
-
+    
+    userDao = new UserDao();
+    
     async login(username, pwd) {
         try {
-            let user = await userDao.getByEmail(username);
+            let user = await this.userDao.getByEmail(username);
             if (user) {
                 let check = await comparePwd(pwd, user.pwd);
                 if (check) return getJwt(username);
@@ -21,7 +21,7 @@ export class UserService {
     async createUser(user) {
         try {
             user.pwd = await hashPwd(user.pwd);
-            userDao.createUser(user);
+            await this.userDao.createUser(user);
         } catch (error) {
             throw error;
         }
@@ -29,7 +29,7 @@ export class UserService {
 
     getUserById(id) {
         try {
-            return userDao.getById(id);
+            return this.userDao.getById(id);
         } catch (error) {
             throw error;
         }
